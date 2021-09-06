@@ -5,6 +5,9 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+/**
+ * 멤버십 모델
+ */
 public class MembershipModel {
     private String membershipId;
     private long point;

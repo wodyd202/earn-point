@@ -5,6 +5,9 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * 멤버십 고유 번호
+ */
 @Embeddable
 public class MembershipId implements Serializable {
     private final UUID id;

@@ -3,6 +3,9 @@ package com.ljy.earnpoint.command.domain;
 import com.ljy.earnpoint.command.application.event.RegisteredMembershipEvent;
 import lombok.Builder;
 
+/**
+ * 해피포인트 멤버십
+ */
 public class HappyPoint extends Membership {
 
     @Builder

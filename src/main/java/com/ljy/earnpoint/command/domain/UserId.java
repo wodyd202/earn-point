@@ -2,6 +2,9 @@ package com.ljy.earnpoint.command.domain;
 
 import java.util.Objects;
 
+/**
+ * 멤버십 사용자 아이디
+ */
 public class UserId {
     private final String id;
 

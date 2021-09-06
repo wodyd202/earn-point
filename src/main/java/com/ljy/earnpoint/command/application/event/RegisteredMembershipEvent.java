@@ -8,12 +8,16 @@ import com.ljy.earnpoint.command.domain.UserId;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * 멤버십 생성시 발생하는 이벤트
+ */
 public class RegisteredMembershipEvent extends AbstractMembershipEvent{
     private final Point point;
     private final Class<?> type;
     private final MembershipState state;
     private final LocalDateTime createDateTime;
     private final UserId userId;
+
     public RegisteredMembershipEvent(Membership membership) {
         super(membership.getIdentifier());
         point = membership.getPoint();

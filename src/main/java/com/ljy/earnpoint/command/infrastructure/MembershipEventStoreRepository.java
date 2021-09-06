@@ -1,6 +1,6 @@
 package com.ljy.earnpoint.command.infrastructure;
 
-import com.ljy.earnpoint.command.application.EventRepository;
+import com.ljy.core.es.event.EventRepository;
 import com.ljy.earnpoint.command.application.event.MembershipRawEvent;
 import com.ljy.earnpoint.command.domain.MembershipId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +18,19 @@ public class MembershipEventStoreRepository implements EventRepository<Membershi
     private String MEMBER_EVENT_KEY;
 
     @Override
-    public long countByEmail(MembershipId identifier) {
+    public long countByIdentifier(MembershipId identifier) {
         ListOperations<String, MembershipRawEvent> listOperations = redisTemplate.opsForList();
         return listOperations.size(MEMBER_EVENT_KEY + ":" + identifier.get());
     }
 
     @Override
-    public List<MembershipRawEvent> findByEmail(MembershipId identifier) {
+    public List<MembershipRawEvent> findByIdentifier(MembershipId identifier) {
         ListOperations<String, MembershipRawEvent> listOperations = redisTemplate.opsForList();
         return listOperations.range(MEMBER_EVENT_KEY + ":" + identifier.get(), 0, -1);
     }
 
     @Override
-    public List<MembershipRawEvent> findByEmailAndVersion(MembershipId identifier, Long version) {
+    public List<MembershipRawEvent> findAfterVersionEventByIdentifier(MembershipId identifier, Long version) {
         ListOperations<String, MembershipRawEvent> listOperations = redisTemplate.opsForList();
         return listOperations.range(MEMBER_EVENT_KEY + ":" + identifier.get(), version, -1);
     }

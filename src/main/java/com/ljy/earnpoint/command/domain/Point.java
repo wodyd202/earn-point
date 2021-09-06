@@ -4,6 +4,9 @@ import com.ljy.earnpoint.command.domain.exception.InvalidPointException;
 
 import java.util.Objects;
 
+/**
+ * 멤버십 포인트
+ */
 public class Point {
     private final long won;
 

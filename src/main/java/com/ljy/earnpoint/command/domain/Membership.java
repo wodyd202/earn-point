@@ -8,7 +8,17 @@ import java.util.Objects;
 
 import static com.ljy.earnpoint.command.domain.MembershipState.ACTIVE;
 
+/**
+ * 멤버십
+ */
 abstract public class Membership extends AggregateRoot<MembershipId> {
+    /**
+     * membershipId 멤버십 고유 번호
+     * point 멤버십 포인트
+     * state 멤버십 상태
+     * createDateTime 멤버십 생성일
+     * userId 멤버십 주인
+     */
     protected MembershipId membershipId;
     protected Point point;
     protected MembershipState state;
@@ -32,6 +42,10 @@ abstract public class Membership extends AggregateRoot<MembershipId> {
         return createDateTime;
     }
 
+    /**
+     * @param validator
+     * - 멤버십 생성
+     */
     public void register(RegisterMembershipValidator validator){
         validator.validation(this.getClass(), userId);
         state = ACTIVE;

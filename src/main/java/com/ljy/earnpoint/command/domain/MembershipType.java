@@ -1,5 +1,8 @@
 package com.ljy.earnpoint.command.domain;
 
+/**
+ * 멤버십 타입
+ */
 public enum MembershipType {
     HAPPY_POINT{
         @Override

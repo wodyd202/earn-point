@@ -6,7 +6,9 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Builder
+/**
+ * 멤버십 이벤트
+ */
 public class MembershipRawEvent implements RawEvent<String> {
     private String identifiier;
     private String type;
@@ -36,6 +38,22 @@ public class MembershipRawEvent implements RawEvent<String> {
 
     public LocalDateTime getCreateDateTime() {
         return createDateTime;
+    }
+
+    /**
+     * @param identifiier 멤버십 고유 번호
+     * @param type 이벤트 타입
+     * @param version 이벤트 버전
+     * @param payload 데이터
+     * @param createDateTime 이벤트 발행일
+     */
+    @Builder
+    public MembershipRawEvent(String identifiier, String type, Long version, String payload, LocalDateTime createDateTime) {
+        this.identifiier = identifiier;
+        this.type = type;
+        this.version = version;
+        this.payload = payload;
+        this.createDateTime = createDateTime;
     }
 
     @Override

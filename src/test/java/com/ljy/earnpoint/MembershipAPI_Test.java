@@ -12,9 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import javax.xml.crypto.Data;
 
 import static com.ljy.earnpoint.Fixture.aRegisterMembership;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,8 +50,7 @@ public class MembershipAPI_Test {
         registerMembershipService.register(registerMembership, UserId.of("getAllMembership"));
         mockMvc.perform(get("/api/membership")
                     .header("USER-ID","getAllMembership"))
-            .andExpect(status().isOk())
-            .andDo(print());
+            .andExpect(status().isOk());
     }
 
     private void assertRegisterMembershipAPI(RegisterMembership registerMembership, ResultMatcher resultMatcher) throws Exception{

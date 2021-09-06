@@ -9,6 +9,9 @@ import lombok.Getter;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+/**
+ * presentation layer 에서 받아올 멤버십 생성 값
+ */
 @Getter
 public class RegisterMembership {
     @NotNull(message = "membership type must not be null")
