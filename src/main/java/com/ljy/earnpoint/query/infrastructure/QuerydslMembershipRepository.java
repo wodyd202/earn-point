@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.util.List;
+
 import static com.ljy.earnpoint.query.model.QMembership.membership;
 
 @Repository
@@ -29,5 +31,12 @@ public class QuerydslMembershipRepository implements MembershipRepository {
     @Override
     public void save(Membership membership) {
         entityManager.persist(membership);
+    }
+
+    @Override
+    public List<Membership> findByUserId(String userId) {
+        return jpaQueryFactory.selectFrom(membership)
+                              .where(membership.userId.eq(userId))
+                              .fetch();
     }
 }

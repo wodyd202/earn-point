@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MembershipTest {
+public class Membership_Test {
 
     @Test
     void invalidPoint(){
@@ -67,35 +67,6 @@ public class MembershipTest {
         assertThrows(AlreadyExistMembershipException.class,()->{
             membership.register(validator);
         });
-    }
-
-    @Nested
-    @SpringBootTest
-    class RegisterMembershipService_Test {
-        @Autowired RegisterMembershipService service;
-
-        @Test
-        void register(){
-            RegisterMembership registerMembership = RegisterMembership.builder()
-                    .type(HAPPY_POINT)
-                    .point(3000)
-                    .build();
-            Membership membership = service.register(registerMembership, UserId.of("userid"));
-            assertNotNull(membership);
-        }
-
-        @Test
-        void alreadyExistType() {
-            RegisterMembership registerMembership = RegisterMembership.builder()
-                    .type(HAPPY_POINT)
-                    .point(3000)
-                    .build();
-
-            assertThrows(AlreadyExistMembershipException.class,()->{
-                service.register(registerMembership, UserId.of("alreadyExist"));
-                service.register(registerMembership, UserId.of("alreadyExist"));
-            });
-        }
     }
 
 }

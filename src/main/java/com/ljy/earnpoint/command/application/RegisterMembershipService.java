@@ -1,5 +1,6 @@
 package com.ljy.earnpoint.command.application;
 
+import com.ljy.earnpoint.command.application.model.MembershipModel;
 import com.ljy.earnpoint.command.application.model.RegisterMembership;
 import com.ljy.earnpoint.command.domain.Membership;
 import com.ljy.earnpoint.command.domain.RegisterMembershipValidator;
@@ -18,10 +19,10 @@ public class RegisterMembershipService {
     }
 
 
-    public Membership register(RegisterMembership registerMembership, UserId userId) {
+    public MembershipModel register(RegisterMembership registerMembership, UserId userId) {
         Membership membership = registerMembership.create(userId);
         membership.register(registerMembershipValidator);
         membershipEventHandler.save(membership);
-        return membership;
+        return MembershipModel.of(membership);
     }
 }
