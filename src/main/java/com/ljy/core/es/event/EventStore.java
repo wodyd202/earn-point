@@ -7,7 +7,7 @@ public interface EventStore<ID> {
 
     List<Event> getEvents(ID identifier);
 
-    void saveEvents(ID identifier, Long expectedVersion, List unCommitedChange);
+    void saveEvents(ID identifier, Long expectedVersion, List<Event> unCommitedChange);
 
     long countEvents(ID identifier);
 }

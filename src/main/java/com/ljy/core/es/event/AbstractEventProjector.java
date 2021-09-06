@@ -6,11 +6,11 @@ import java.util.Objects;
 
 abstract public class AbstractEventProjector implements EventProjector{
 
-    private static String APPLY_METHOD = "apply";
+    private static String EXECUTE_METHOD = "execute";
     @Override
     public void handle(Event event) {
         try {
-            Method method = getClass().getDeclaredMethod(APPLY_METHOD, event.getClass());
+            Method method = getClass().getDeclaredMethod(EXECUTE_METHOD, event.getClass());
             if(Objects.isNull(method)){
                 throw new NoSuchMethodException();
             }
