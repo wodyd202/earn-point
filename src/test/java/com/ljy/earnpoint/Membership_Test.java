@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.ljy.earnpoint.Fixture.aMembership;
 import static com.ljy.earnpoint.command.domain.MembershipState.ACTIVE;
+import static com.ljy.earnpoint.command.domain.MembershipType.CJ_ONE;
 import static com.ljy.earnpoint.command.domain.MembershipType.HAPPY_POINT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -38,13 +39,36 @@ public class Membership_Test {
     }
 
     @Test
-    void register(){
+    void register_happypoint(){
         Membership membership = aMembership(3000, UserId.of("userid"), HAPPY_POINT);
 
         MembershipRepository membershipRepository = mock(MembershipRepository.class);
         RegisterMembershipValidator validator = new RegisterMembershipValidator(membershipRepository);
         membership.register(validator);
         assertEquals(membership.getState(), ACTIVE);
+        assertTrue(membership instanceof HappyPoint);
+    }
+
+    @Test
+    void register_cjone(){
+        Membership membership = aMembership(3000, UserId.of("userid"), CJ_ONE);
+
+        MembershipRepository membershipRepository = mock(MembershipRepository.class);
+        RegisterMembershipValidator validator = new RegisterMembershipValidator(membershipRepository);
+        membership.register(validator);
+        assertEquals(membership.getState(), ACTIVE);
+        assertTrue(membership instanceof CjOne);
+    }
+
+    @Test
+    void register_shinsegae(){
+        Membership membership = aMembership(3000, UserId.of("userid"), MembershipType.SHINSEGAE);
+
+        MembershipRepository membershipRepository = mock(MembershipRepository.class);
+        RegisterMembershipValidator validator = new RegisterMembershipValidator(membershipRepository);
+        membership.register(validator);
+        assertEquals(membership.getState(), ACTIVE);
+        assertTrue(membership instanceof Shinsegae);
     }
 
     @Test

@@ -19,7 +19,9 @@ import static com.ljy.earnpoint.command.domain.MembershipState.ACTIVE;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = HappyPoint.class, name = "happypoint")
+        @JsonSubTypes.Type(value = HappyPoint.class, name = "happypoint"),
+        @JsonSubTypes.Type(value = CjOne.class, name = "cjone"),
+        @JsonSubTypes.Type(value = Shinsegae.class, name = "shinsegae")
 })
 abstract public class Membership extends AggregateRoot<MembershipId> {
 

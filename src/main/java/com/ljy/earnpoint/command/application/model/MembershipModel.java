@@ -12,16 +12,18 @@ public class MembershipModel {
     private String membershipId;
     private long point;
     private String state;
+    private String type;
     private LocalDateTime createDateTime;
     private String userId;
 
     @Builder
-    private MembershipModel(String membershipId, long point, String state, LocalDateTime createDateTime, String userId) {
+    private MembershipModel(String membershipId, long point, String state, LocalDateTime createDateTime, String userId, String type) {
         this.membershipId = membershipId;
         this.point = point;
         this.state = state;
         this.createDateTime = createDateTime;
         this.userId = userId;
+        this.type = type;
     }
 
     public static MembershipModel of(Membership membership) {
@@ -31,6 +33,7 @@ public class MembershipModel {
                 .state(membership.getState().toString())
                 .createDateTime(membership.getCreateDateTime())
                 .userId(membership.getUserId().get())
+                .type(membership.getClass().getSimpleName())
                 .build();
     }
 }
