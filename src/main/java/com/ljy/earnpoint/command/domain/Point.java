@@ -2,13 +2,16 @@ package com.ljy.earnpoint.command.domain;
 
 import com.ljy.earnpoint.command.domain.exception.InvalidPointException;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * 멤버십 포인트
  */
-public class Point {
+public class Point implements Serializable {
     private final long won;
+
+    protected Point() {won = 0;}
 
     private Point(long won) {
         if(won < 0){

@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Slf4j
 abstract public class AggregateRoot<ID> {
-    private final ID identifier;
+    protected ID identifier;
     private Long expectedVersion = 0L;
     private final List<Event> events = new ArrayList<>();
 

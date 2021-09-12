@@ -2,15 +2,24 @@ package com.ljy.core.es.snapshot;
 
 import com.ljy.core.es.domain.AggregateRoot;
 
-public class Snapshot<A extends AggregateRoot, ID> {
+import javax.persistence.*;
+import java.io.Serializable;
+
+@MappedSuperclass
+abstract public class Snapshot<A extends AggregateRoot, ID extends Serializable> {
+
+    @Id
     private final ID identifier;
     private final long version;
-    private final A aggregateRoot;
 
-    public Snapshot(ID identifier, long version, A aggregateRoot) {
+    protected Snapshot(){
+        this.identifier = null;
+        this.version = 0;
+    }
+
+    protected Snapshot(ID identifier, long version) {
         this.identifier = identifier;
         this.version = version;
-        this.aggregateRoot = aggregateRoot;
     }
 
     public ID getIdentifier() {
@@ -21,7 +30,5 @@ public class Snapshot<A extends AggregateRoot, ID> {
         return version;
     }
 
-    public A getAggregateRoot() {
-        return aggregateRoot;
-    }
+    abstract public A getAggregateRoot();
 }

@@ -3,42 +3,51 @@ package com.ljy.earnpoint.command.infrastructure;
 import com.ljy.core.es.event.EventRepository;
 import com.ljy.earnpoint.command.application.event.MembershipRawEvent;
 import com.ljy.earnpoint.command.domain.MembershipId;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+import static com.ljy.earnpoint.command.application.event.QMembershipRawEvent.*;
+
 @Repository
+@Transactional
 public class MembershipEventStoreRepository implements EventRepository<MembershipId, MembershipRawEvent> {
-    @Autowired private RedisTemplate<String,MembershipRawEvent> redisTemplate;
-    @Value("${membership.event.key}")
-    private String MEMBER_EVENT_KEY;
+    @Autowired private JPAQueryFactory jpaQueryFactory;
+    @PersistenceContext private EntityManager entityManager;
 
     @Override
     public long countByIdentifier(MembershipId identifier) {
-        ListOperations<String, MembershipRawEvent> listOperations = redisTemplate.opsForList();
-        return listOperations.size(MEMBER_EVENT_KEY + ":" + identifier.get());
+        return jpaQueryFactory.select(membershipRawEvent)
+                .from(membershipRawEvent)
+                .where(eqIdentifier(identifier)).fetchCount();
     }
 
     @Override
     public List<MembershipRawEvent> findByIdentifier(MembershipId identifier) {
-        ListOperations<String, MembershipRawEvent> listOperations = redisTemplate.opsForList();
-        return listOperations.range(MEMBER_EVENT_KEY + ":" + identifier.get(), 0, -1);
+        return jpaQueryFactory.select(membershipRawEvent)
+                .from(membershipRawEvent)
+                .where(eqIdentifier(identifier)).fetch();
     }
 
     @Override
     public List<MembershipRawEvent> findAfterVersionEventByIdentifier(MembershipId identifier, Long version) {
-        ListOperations<String, MembershipRawEvent> listOperations = redisTemplate.opsForList();
-        return listOperations.range(MEMBER_EVENT_KEY + ":" + identifier.get(), version, -1);
+        return jpaQueryFactory.select(membershipRawEvent)
+                .from(membershipRawEvent)
+                .where(eqIdentifier(identifier), membershipRawEvent.version.gt(version)).fetch();
+    }
+
+    private BooleanExpression eqIdentifier(MembershipId identifier){
+        return membershipRawEvent.identifiier.eq(identifier.get().toString());
     }
 
     @Override
     public void save(MembershipRawEvent event) {
-        ListOperations<String, MembershipRawEvent> listOperations = redisTemplate.opsForList();
-        listOperations.rightPush(MEMBER_EVENT_KEY + ":" + event.getIdentifier(), event);
+        entityManager.persist(event);
     }
-
 }

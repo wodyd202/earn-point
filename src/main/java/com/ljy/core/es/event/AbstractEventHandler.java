@@ -4,6 +4,7 @@ import com.ljy.core.es.domain.AggregateRoot;
 import com.ljy.core.es.snapshot.Snapshot;
 import com.ljy.core.es.snapshot.SnapshotRepository;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -12,11 +13,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-abstract public class AbstractEventHandler<A extends AggregateRoot, ID> implements EventHandler<A,ID> {
+abstract public class AbstractEventHandler<A extends AggregateRoot, ID extends Serializable> implements EventHandler<A,ID> {
     private final Class<A> aggregateType;
     private EventStore<ID> eventStore;
     private SnapshotRepository<A, ID> snapshotRepository;
     private final static int SNAPSHOT_COUNT = 5;
+
+    abstract protected Snapshot<A, ID> newSnapshot(A aggregate);
 
     protected AbstractEventHandler(EventStore<ID> eventStore, SnapshotRepository<A, ID> snapshotRepository) {
         this.aggregateType = aggregateType();
@@ -32,7 +35,7 @@ abstract public class AbstractEventHandler<A extends AggregateRoot, ID> implemen
         long countEvents = eventStore.countEvents(identifier);
 
         if(shouldSaveSnapshot(countEvents)){
-            Snapshot<A, ID> snapshot = new Snapshot<>(identifier, aggregate.getExpectedVersion(), aggregate);
+            Snapshot<A, ID> snapshot = newSnapshot(aggregate);
             snapshotRepository.save(snapshot);
         }
     }

@@ -3,18 +3,33 @@ package com.ljy.earnpoint.command.application.event;
 import com.ljy.core.es.event.RawEvent;
 import lombok.Builder;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * 멤버십 이벤트
  */
+@Entity
+@Table(name = "membership_events",
+        indexes = {@Index(columnList = "identifiier")})
 public class MembershipRawEvent implements RawEvent<String> {
-    private String identifiier;
-    private String type;
-    private Long version;
-    private String payload;
-    private LocalDateTime createDateTime;
+
+    @Id
+    private final UUID id;
+    private final String identifiier;
+    private final String type;
+    private final Long version;
+    private final String payload;
+    private final LocalDateTime createDateTime;
+
+    public UUID getId() {
+        return id;
+    }
 
     @Override
     public String getIdentifier() {
@@ -40,6 +55,15 @@ public class MembershipRawEvent implements RawEvent<String> {
         return createDateTime;
     }
 
+    protected MembershipRawEvent(){
+        this.identifiier = null;
+        this.type = null;
+        this.version = null;
+        this.payload = null;
+        this.createDateTime = null;
+        id = null;
+    }
+
     /**
      * @param identifiier 멤버십 고유 번호
      * @param type 이벤트 타입
@@ -54,6 +78,7 @@ public class MembershipRawEvent implements RawEvent<String> {
         this.version = version;
         this.payload = payload;
         this.createDateTime = createDateTime;
+        id = UUID.randomUUID();
     }
 
     @Override

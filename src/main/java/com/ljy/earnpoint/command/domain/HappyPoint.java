@@ -1,11 +1,13 @@
 package com.ljy.earnpoint.command.domain;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.ljy.earnpoint.command.application.event.RegisteredMembershipEvent;
 import lombok.Builder;
 
 /**
  * 해피포인트 멤버십
  */
+@JsonTypeName("happypoint")
 public class HappyPoint extends Membership {
 
     @Builder
@@ -15,7 +17,7 @@ public class HappyPoint extends Membership {
 
     @Override
     protected void apply(RegisteredMembershipEvent event){
-        membershipId = event.getMembershipId();
+        super.identifier = event.getMembershipId();
         point = event.getPoint();
         userId = event.getUserId();
         createDateTime = event.getCreateDateTime();

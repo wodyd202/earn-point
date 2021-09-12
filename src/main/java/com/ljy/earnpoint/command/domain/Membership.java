@@ -1,5 +1,7 @@
 package com.ljy.earnpoint.command.domain;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.ljy.core.es.domain.AggregateRoot;
 import com.ljy.earnpoint.command.application.event.RegisteredMembershipEvent;
 
@@ -11,7 +13,16 @@ import static com.ljy.earnpoint.command.domain.MembershipState.ACTIVE;
 /**
  * 멤버십
  */
+@JsonTypeInfo(
+        use=JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = HappyPoint.class, name = "happypoint")
+})
 abstract public class Membership extends AggregateRoot<MembershipId> {
+
     /**
      * membershipId 멤버십 고유 번호
      * point 멤버십 포인트
@@ -19,7 +30,6 @@ abstract public class Membership extends AggregateRoot<MembershipId> {
      * createDateTime 멤버십 생성일
      * userId 멤버십 주인
      */
-    protected MembershipId membershipId;
     protected Point point;
     protected MembershipState state;
     protected LocalDateTime createDateTime;
@@ -28,7 +38,6 @@ abstract public class Membership extends AggregateRoot<MembershipId> {
     protected Membership(){super(null);}
     protected Membership(Point point, UserId userId) {
         super(MembershipId.newInstance());
-        membershipId = getIdentifier();
         this.point = point;
         this.userId = userId;
         createDateTime = LocalDateTime.now();
@@ -67,11 +76,11 @@ abstract public class Membership extends AggregateRoot<MembershipId> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Membership that = (Membership) o;
-        return Objects.equals(membershipId, that.membershipId) && Objects.equals(point, that.point) && state == that.state && Objects.equals(createDateTime, that.createDateTime) && Objects.equals(userId, that.userId);
+        return Objects.equals(point, that.point) && state == that.state && Objects.equals(createDateTime, that.createDateTime) && Objects.equals(userId, that.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(membershipId, point, state, createDateTime, userId);
+        return Objects.hash(point, state, createDateTime, userId);
     }
 }

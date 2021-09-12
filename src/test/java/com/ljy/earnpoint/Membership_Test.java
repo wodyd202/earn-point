@@ -1,19 +1,12 @@
 package com.ljy.earnpoint;
 
-import com.ljy.core.es.event.EventStore;
-import com.ljy.core.es.snapshot.SnapshotRepository;
-import com.ljy.earnpoint.command.application.MembershipEventHandler;
-import com.ljy.earnpoint.command.application.RegisterMembershipService;
 import com.ljy.earnpoint.command.application.model.RegisterMembership;
 import com.ljy.earnpoint.command.domain.*;
 import com.ljy.earnpoint.command.domain.exception.AlreadyExistMembershipException;
 import com.ljy.earnpoint.command.domain.exception.InvalidPointException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.ljy.earnpoint.Fixture.aMembership;
 import static com.ljy.earnpoint.command.domain.MembershipState.ACTIVE;

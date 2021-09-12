@@ -8,6 +8,8 @@ import java.util.Objects;
 public class UserId {
     private final String id;
 
+    protected UserId() { id = null;}
+
     private UserId(String id) {
         this.id = id;
     }
