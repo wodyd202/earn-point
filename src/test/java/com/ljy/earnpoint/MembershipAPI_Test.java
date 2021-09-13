@@ -1,7 +1,10 @@
 package com.ljy.earnpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ljy.earnpoint.command.application.RegisterMembershipService;
 import com.ljy.earnpoint.command.application.model.RegisterMembership;
+import com.ljy.earnpoint.domain.read.MembershipModel;
+import com.ljy.earnpoint.domain.values.UserId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class MembershipAPI_Test {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    RegisterMembershipService registerMembershipService;
 
     @Test
     @DisplayName("멤버십 생성 요청시 타입은 반드시 입력해야함")
@@ -52,4 +58,23 @@ public class MembershipAPI_Test {
                 .header("USER-ID","userId"))
             .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("멤버십 비활성화")
+    void enable() throws Exception {
+        RegisterMembership registerMembership = aRegisterMembership().build();
+        MembershipModel membershipModel = registerMembershipService.register(registerMembership, UserId.of("userId"));
+        mockMvc.perform(delete("/api/membership/{membershipId}",membershipModel.getMembershipId())
+                .header("USER-ID","userId"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("해당 멤버십 아이디가 존재하지 않으면 안됨")
+    void enable_notFound() throws Exception {
+        mockMvc.perform(delete("/api/membership/{membershipId}","notFound")
+                        .header("USER-ID","userId"))
+                .andExpect(status().isBadRequest());
+    }
+
 }

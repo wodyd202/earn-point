@@ -5,6 +5,7 @@ import com.ljy.earnpoint.domain.exception.AlreadyEnabledMembershipException;
 import com.ljy.earnpoint.domain.read.MembershipModel;
 import com.ljy.earnpoint.domain.values.*;
 import com.ljy.earnpoint.domain.infra.PointConveter;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import java.util.Objects;
 })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
+@DynamicUpdate
 abstract public class Membership extends AbstractAggregateRoot<Membership> {
 
     /**

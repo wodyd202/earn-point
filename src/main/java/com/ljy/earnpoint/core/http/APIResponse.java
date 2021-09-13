@@ -14,10 +14,11 @@ public class APIResponse extends ResponseEntity<HashMap<String, Object>> {
         HashMap<String,Object> result = new HashMap<>();
         if(status.is3xxRedirection() || status.is2xxSuccessful()){
             result.put("success", true);
-            result.put("response", body);
         }else{
             result.put("success", false);
-            result.put("message", body);
+        }
+        if(body != null){
+            result.put("response", body);
         }
         return result;
     }

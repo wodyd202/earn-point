@@ -1,5 +1,7 @@
 package com.ljy.earnpoint.domain.values;
 
+import com.ljy.earnpoint.domain.Membership;
+
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
@@ -20,6 +22,10 @@ public class MembershipId implements Serializable {
 
     public static MembershipId create(){
         return new MembershipId(UUID.randomUUID().toString());
+    }
+
+    public static MembershipId of(String membershipId) {
+        return new MembershipId(membershipId);
     }
 
     public String get() {
