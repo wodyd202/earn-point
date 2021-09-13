@@ -1,17 +1,21 @@
 package com.ljy.earnpoint;
 
+import com.ljy.earnpoint.command.application.SimpleRegisterMembershipValidator;
+import com.ljy.earnpoint.command.application.MembershipRepository;
 import com.ljy.earnpoint.command.application.model.RegisterMembership;
-import com.ljy.earnpoint.command.domain.*;
-import com.ljy.earnpoint.command.domain.exception.AlreadyExistMembershipException;
-import com.ljy.earnpoint.command.domain.exception.InvalidPointException;
+import com.ljy.earnpoint.domain.*;
+import com.ljy.earnpoint.domain.exception.AlreadyEnabledMembershipException;
+import com.ljy.earnpoint.domain.exception.AlreadyExistMembershipException;
+import com.ljy.earnpoint.domain.exception.InvalidPointException;
+import com.ljy.earnpoint.domain.values.MembershipState;
+import com.ljy.earnpoint.domain.values.Point;
+import com.ljy.earnpoint.domain.values.UserId;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.ljy.earnpoint.Fixture.aMembership;
-import static com.ljy.earnpoint.command.domain.MembershipState.ACTIVE;
-import static com.ljy.earnpoint.command.domain.MembershipType.CJ_ONE;
-import static com.ljy.earnpoint.command.domain.MembershipType.HAPPY_POINT;
+import static com.ljy.earnpoint.Fixture.aHappyPoint;
+import static com.ljy.earnpoint.domain.values.MembershipType.HAPPY_POINT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,63 +30,66 @@ public class Membership_Test {
     }
 
     @Test
+    void validPoint(){
+        Point won = Point.won(3000);
+        assertEquals(won, Point.won(3000));
+        assertEquals(won.get(), 3000);
+    }
+
+    @Test
+    @DisplayName("해피포인트 멤버십 생성")
     void create() {
         RegisterMembership registerMembership = RegisterMembership.builder()
                 .type(HAPPY_POINT)
                 .point(3000)
                 .build();
-        UserId userid = UserId.of("userid");
-        Membership membership = registerMembership.create(userid);
-
+        Membership membership = Membership.createWith(registerMembership, UserId.of("userId"));
         assertTrue(membership instanceof HappyPoint);
-        assertEquals(membership.getPoint(), Point.won(3000));
     }
 
     @Test
+    @DisplayName("해피포인트 멤버십 정상 등록")
     void register_happypoint(){
-        Membership membership = aMembership(3000, UserId.of("userid"), HAPPY_POINT);
+        RegisterMembership registerMembership = RegisterMembership.builder()
+                .type(HAPPY_POINT)
+                .point(3000)
+                .build();
+        Membership membership = Membership.createWith(registerMembership, UserId.of("userId"));
 
         MembershipRepository membershipRepository = mock(MembershipRepository.class);
-        RegisterMembershipValidator validator = new RegisterMembershipValidator(membershipRepository);
+        RegisterMembershipValidator validator = new SimpleRegisterMembershipValidator(membershipRepository);
         membership.register(validator);
-        assertEquals(membership.getState(), ACTIVE);
-        assertTrue(membership instanceof HappyPoint);
+        assertEquals(membership.getState(), MembershipState.ACTIVE);
     }
 
     @Test
-    void register_cjone(){
-        Membership membership = aMembership(3000, UserId.of("userid"), CJ_ONE);
-
+    @DisplayName("멤버십 생성시 기존에 해당 타입의 멤버십이 있으면 안됨")
+    void register_alreadyExist(){
         MembershipRepository membershipRepository = mock(MembershipRepository.class);
-        RegisterMembershipValidator validator = new RegisterMembershipValidator(membershipRepository);
-        membership.register(validator);
-        assertEquals(membership.getState(), ACTIVE);
-        assertTrue(membership instanceof CjOne);
-    }
-
-    @Test
-    void register_shinsegae(){
-        Membership membership = aMembership(3000, UserId.of("userid"), MembershipType.SHINSEGAE);
-
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-        RegisterMembershipValidator validator = new RegisterMembershipValidator(membershipRepository);
-        membership.register(validator);
-        assertEquals(membership.getState(), ACTIVE);
-        assertTrue(membership instanceof Shinsegae);
-    }
-
-    @Test
-    @DisplayName("이미 해당 종류의 멤버십이 존재하면 안됨")
-    void alreadyExistType(){
-        Membership membership = aMembership(3000, UserId.of("userid"), HAPPY_POINT);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        when(membershipRepository.existByMembershipTypeAndUserId(membership.getClass(), UserId.of("userid")))
+        RegisterMembershipValidator validator = new SimpleRegisterMembershipValidator(membershipRepository);
+        when(membershipRepository.existByUserIdAndType(UserId.of("userId"), "HappyPoint"))
                 .thenReturn(true);
 
-        RegisterMembershipValidator validator = new RegisterMembershipValidator(membershipRepository);
         assertThrows(AlreadyExistMembershipException.class,()->{
-            membership.register(validator);
+            validator.validation(HappyPoint.class, UserId.of("userId"));
+        });
+    }
+
+
+    @Test
+    @DisplayName("멤버십 비활성화")
+    void enable(){
+        Membership membership = aHappyPoint();
+        membership.enable();
+        assertEquals(membership.getState(), MembershipState.UN_ACTIVE);
+    }
+
+    @Test
+    void enable_alreadyenabled(){
+        Membership membership = aHappyPoint();
+        membership.enable();
+        assertThrows(AlreadyEnabledMembershipException.class, ()->{
+            membership.enable();
         });
     }
 
