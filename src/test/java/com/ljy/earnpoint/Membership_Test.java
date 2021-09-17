@@ -2,11 +2,13 @@ package com.ljy.earnpoint;
 
 import com.ljy.earnpoint.command.application.SimpleRegisterMembershipValidator;
 import com.ljy.earnpoint.command.application.MembershipRepository;
-import com.ljy.earnpoint.command.application.model.RegisterMembership;
+import com.ljy.earnpoint.domain.RegisterMembership;
 import com.ljy.earnpoint.domain.*;
+import com.ljy.earnpoint.domain.exception.AlreadyAbledMembershipException;
 import com.ljy.earnpoint.domain.exception.AlreadyEnabledMembershipException;
 import com.ljy.earnpoint.domain.exception.AlreadyExistMembershipException;
 import com.ljy.earnpoint.domain.exception.InvalidPointException;
+import com.ljy.earnpoint.domain.read.MembershipModel;
 import com.ljy.earnpoint.domain.values.MembershipState;
 import com.ljy.earnpoint.domain.values.Point;
 import com.ljy.earnpoint.domain.values.UserId;
@@ -59,7 +61,8 @@ public class Membership_Test {
         MembershipRepository membershipRepository = mock(MembershipRepository.class);
         RegisterMembershipValidator validator = new SimpleRegisterMembershipValidator(membershipRepository);
         membership.register(validator);
-        assertEquals(membership.getState(), MembershipState.ACTIVE);
+        MembershipModel membershipModel = membership.toModel();
+        assertEquals(membershipModel.getState(), MembershipState.ACTIVE);
     }
 
     @Test
@@ -81,15 +84,36 @@ public class Membership_Test {
     void enable(){
         Membership membership = aHappyPoint();
         membership.enable();
-        assertEquals(membership.getState(), MembershipState.UN_ACTIVE);
+        MembershipModel membershipModel = membership.toModel();
+        assertEquals(membershipModel.getState(), MembershipState.UN_ACTIVE);
     }
 
     @Test
+    @DisplayName("이미 비활성화되어 있는 멤버십을 다시 비활성화 할 수 없음")
     void enable_alreadyenabled(){
         Membership membership = aHappyPoint();
         membership.enable();
         assertThrows(AlreadyEnabledMembershipException.class, ()->{
             membership.enable();
+        });
+    }
+
+    @Test
+    @DisplayName("멤버십 활성화")
+    void able(){
+        Membership membership = aHappyPoint();
+        membership.enable();
+        membership.able();
+        MembershipModel membershipModel = membership.toModel();
+        assertEquals(membershipModel.getState(), MembershipState.ACTIVE);
+    }
+
+    @Test
+    @DisplayName("이미 활성화되어 있는 멤버십을 다시 활성화 할 수 없음")
+    void able_alreadyAbled(){
+        Membership membership = aHappyPoint();
+        assertThrows(AlreadyAbledMembershipException.class,()->{
+           membership.able();
         });
     }
 

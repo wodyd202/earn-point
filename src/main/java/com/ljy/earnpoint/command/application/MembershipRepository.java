@@ -9,6 +9,5 @@ import java.util.Optional;
 public interface MembershipRepository {
     boolean existByUserIdAndType(UserId userId, String type);
     void save(Membership membership);
-
     Optional<Membership> findByMembershipIdAndUserId(MembershipId membershipId, UserId userId);
 }

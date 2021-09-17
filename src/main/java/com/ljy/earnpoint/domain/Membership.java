@@ -1,6 +1,6 @@
 package com.ljy.earnpoint.domain;
 
-import com.ljy.earnpoint.command.application.model.RegisterMembership;
+import com.ljy.earnpoint.domain.exception.AlreadyAbledMembershipException;
 import com.ljy.earnpoint.domain.exception.AlreadyEnabledMembershipException;
 import com.ljy.earnpoint.domain.read.MembershipModel;
 import com.ljy.earnpoint.domain.values.*;
@@ -99,6 +99,18 @@ abstract public class Membership extends AbstractAggregateRoot<Membership> {
         }
     }
 
+    public void able(){
+        verifyUnActive();
+        state = MembershipState.ACTIVE;
+    }
+
+    private void verifyUnActive(){
+        if(state.equals(MembershipState.ACTIVE)){
+            throw new AlreadyAbledMembershipException();
+        }
+    }
+
+
     public MembershipModel toModel(){
         return MembershipModel.builder()
                 .membershipId(membershipId.get())
@@ -123,8 +135,5 @@ abstract public class Membership extends AbstractAggregateRoot<Membership> {
         return Objects.hash(point, state, createDateTime, userId);
     }
 
-    public MembershipState getState() {
-        return state;
-    }
 
 }

@@ -1,7 +1,8 @@
 package com.ljy.earnpoint;
 
+import com.ljy.earnpoint.command.application.EnableMembershipService;
 import com.ljy.earnpoint.command.application.RegisterMembershipService;
-import com.ljy.earnpoint.command.application.model.RegisterMembership;
+import com.ljy.earnpoint.domain.RegisterMembership;
 import com.ljy.earnpoint.domain.read.MembershipModel;
 import com.ljy.earnpoint.domain.values.MembershipId;
 import com.ljy.earnpoint.domain.values.UserId;

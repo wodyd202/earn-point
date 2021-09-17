@@ -1,14 +1,12 @@
 package com.ljy.earnpoint.command.presentation;
 
-import com.ljy.earnpoint.EnableMembershipService;
+import com.ljy.earnpoint.command.application.AbleMembershipService;
+import com.ljy.earnpoint.command.application.EnableMembershipService;
 import com.ljy.earnpoint.core.http.APIResponse;
 import com.ljy.earnpoint.core.http.CommandException;
 import com.ljy.earnpoint.command.application.RegisterMembershipService;
-import com.ljy.earnpoint.command.application.model.RegisterMembership;
-import com.ljy.earnpoint.domain.exception.AlreadyEnabledMembershipException;
-import com.ljy.earnpoint.domain.exception.AlreadyExistMembershipException;
-import com.ljy.earnpoint.domain.exception.InvalidPointException;
-import com.ljy.earnpoint.domain.exception.MembershipNotFoundException;
+import com.ljy.earnpoint.domain.RegisterMembership;
+import com.ljy.earnpoint.domain.exception.*;
 import com.ljy.earnpoint.domain.read.MembershipModel;
 import com.ljy.earnpoint.domain.values.MembershipId;
 import com.ljy.earnpoint.domain.values.UserId;
@@ -24,6 +22,7 @@ import javax.validation.Valid;
 public class MembershipAPI {
     @Autowired private RegisterMembershipService registerMembershipService;
     @Autowired private EnableMembershipService enableMembershipService;
+    @Autowired private AbleMembershipService ableMembershipService;
 
     @PostMapping
     public APIResponse register(@Valid @RequestBody RegisterMembership registerMembership,
@@ -42,6 +41,12 @@ public class MembershipAPI {
         return new APIResponse(null, HttpStatus.OK);
     }
 
+    @PutMapping("{membershipId}/active")
+    public APIResponse able(@PathVariable MembershipId membershipId, @RequestHeader("USER-ID") String userId){
+        MembershipModel membershipModel = ableMembershipService.able(membershipId, UserId.of(userId));
+        return new APIResponse(membershipModel, HttpStatus.OK);
+    }
+
     @ExceptionHandler({
             AlreadyExistMembershipException.class,
             InvalidPointException.class,
@@ -51,7 +56,10 @@ public class MembershipAPI {
         return new APIResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AlreadyEnabledMembershipException.class)
+    @ExceptionHandler({
+            AlreadyEnabledMembershipException.class,
+            AlreadyAbledMembershipException.class
+    })
     public APIResponse error(IllegalStateException e){
         return new APIResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
     }

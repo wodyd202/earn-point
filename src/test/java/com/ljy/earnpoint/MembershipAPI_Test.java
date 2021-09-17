@@ -1,9 +1,11 @@
 package com.ljy.earnpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ljy.earnpoint.command.application.EnableMembershipService;
 import com.ljy.earnpoint.command.application.RegisterMembershipService;
-import com.ljy.earnpoint.command.application.model.RegisterMembership;
+import com.ljy.earnpoint.domain.RegisterMembership;
 import com.ljy.earnpoint.domain.read.MembershipModel;
+import com.ljy.earnpoint.domain.values.MembershipId;
 import com.ljy.earnpoint.domain.values.UserId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,6 +77,21 @@ public class MembershipAPI_Test {
         mockMvc.perform(delete("/api/membership/{membershipId}","notFound")
                         .header("USER-ID","userId"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Autowired
+    EnableMembershipService enableMembershipService;
+
+    @Test
+    @DisplayName("멤버십 활성화")
+    void able() throws Exception {
+        RegisterMembership registerMembership = aRegisterMembership().build();
+        MembershipModel membershipModel = registerMembershipService.register(registerMembership, UserId.of("ableMembership"));
+        enableMembershipService.enable(MembershipId.of(membershipModel.getMembershipId()), UserId.of("ableMembership"));
+
+        mockMvc.perform(put("/api/membership/{membershipId}/active", membershipModel.getMembershipId())
+                .header("USER-ID","ableMembership"))
+            .andExpect(status().isOk());
     }
 
 }

@@ -1,4 +1,4 @@
-package com.ljy.earnpoint.command.application.model;
+package com.ljy.earnpoint.domain;
 
 import com.ljy.earnpoint.domain.values.MembershipType;
 import lombok.Builder;

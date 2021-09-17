@@ -3,7 +3,6 @@ package com.ljy.earnpoint.domain.read;
 import com.ljy.earnpoint.domain.values.MembershipId;
 import com.ljy.earnpoint.domain.values.MembershipState;
 import com.ljy.earnpoint.domain.values.Point;
-import com.ljy.earnpoint.domain.values.UserId;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
